@@ -1,7 +1,7 @@
 #include <iostream> //borro cstring (no usare)
 using namespace std;
 
-const int 4;
+const int N= 4;
 bool esFilaDominanteEstricta(int (*M)[N],int f){ //termino la primera funcion
     bool hayM=false;
 
