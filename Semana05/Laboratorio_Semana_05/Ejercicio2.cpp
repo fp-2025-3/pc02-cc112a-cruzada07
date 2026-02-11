@@ -1,3 +1,4 @@
+//Autor: Kevin de la Cruz Sanchez
 #include <iostream>
 #include <cmath>
 using namespace std;

@@ -1,3 +1,4 @@
+//Autor: Kevin de la Cruz Sanchez
 #include <iostream>
 using namespace std;
 
@@ -9,7 +10,7 @@ struct Estudiante{
 int main(){
     int n;
     cout<<"Ingrese el numero de estudiantes: "; cin>> n;
-    
+
     Estudiante lista[n];
     for(int i=0;i<n;i++){
         cout<<"Ingrese el nombre del estudiante "<<i+1<<": ";
