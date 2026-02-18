@@ -1,0 +1,13 @@
+2
+2
+2
+2
+2
+2
+2
+-------------------------
+RESUMEN
+Total: 14
+Promedio: 2
+Mayor venta: 2
+Menor venta: 2
