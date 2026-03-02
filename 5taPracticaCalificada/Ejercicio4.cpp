@@ -2,7 +2,8 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-//      ventas.dat
+
+// ventas.dat
 struct Venta {
     int idVenta;
     int idVendedor;
@@ -10,112 +11,154 @@ struct Venta {
     int cantidad;
     double precioUnitario;
 };
+
 int totalRegistros(const string & nombreArchivo){
-    ifstream archivo(nombreArchivo,ios ::binary);
+    ifstream archivo(nombreArchivo, ios::binary);
     Venta p;
     int numero=0;
+
     while(archivo.read((char*)&p, sizeof(p))){
         numero++;
     }
     archivo.close();
     return numero;
 }
-float montoTotalVendido(const string & nombreArchivo){
-    ifstream archivo(nombreArchivo,ios ::binary);
+
+double montoTotalVendido(const string & nombreArchivo){ //cambiamos float por double
+    ifstream archivo(nombreArchivo, ios::binary);
     Venta p;
-    float monto=0;
+    double monto=0;
+
     while(archivo.read((char*)&p, sizeof(p))){
-        float n=(p.cantidad)*(p.precioUnitario);
-        monto += n;
-        
+        monto += p.cantidad * p.precioUnitario; //era innecesario el "float n"
     }
     archivo.close();
     return monto;
 }
-void mejorVendedor(const string & nombreArchivo){
-    ifstream archivo(nombreArchivo,ios ::binary);
-    Venta p;
-    int idvend;
-    float mejormonto=0;
-    while(archivo.read((char*)&p, sizeof(p))){
-        if(mejormonto<(p.cantidad) * (p.precioUnitario)){
-            mejormonto=(p.cantidad) * (p.precioUnitario);
-            idvend=p.idVendedor;
-        }
-        
-    }
-    cout<<"\nVENDEDOR CON MAYOR RECAUDACION:\n";
-    cout<<"ID Vendedor: "<<idvend;
-    cout<<"\nTotal vendido: S/."<<mejormonto;
-    cout<<"\n";
 
+void mejorVendedor(const string & nombreArchivo, int &idMejor, double &mejorMonto){ //cambiamos firma
+    ifstream archivo(nombreArchivo, ios::binary);
+    Venta p;
+
+    mejorMonto = 0;
+    idMejor = 0;
+    while(archivo.read((char*)&p, sizeof(p))){
+        // calculamos total de este vendedor
+        double totalVendedor = 0;
+
+        ifstream archivo2(nombreArchivo, ios::binary);
+        Venta q;
+
+        while(archivo2.read((char*)&q, sizeof(q))){
+            if(q.idVendedor == p.idVendedor){
+                totalVendedor += q.cantidad * q.precioUnitario;
+            }
+        }
+
+        archivo2.close();
+        if(totalVendedor>mejorMonto){ //se actualizara el mejor vendedor si supera el monto actual
+            mejorMonto = totalVendedor;
+            idMejor = p.idVendedor;
+        }
+    }
+    archivo.close();
+}
+
+void mejorProducto(const string & nombreArchivo, int &idMejorProd, int &mayorCantidad){
+    ifstream archivo(nombreArchivo, ios::binary);
+    Venta p;
+
+    mayorCantidad = 0;
+    idMejorProd = 0;
+
+    while(archivo.read((char*)&p, sizeof(p))){
+        int totalUnidades = 0;
+
+        ifstream archivo2(nombreArchivo, ios::binary);
+        Venta q;
+
+        while(archivo2.read((char*)&q, sizeof(q))){
+            if(q.idProducto == p.idProducto){
+                totalUnidades += q.cantidad;
+            }
+        }
+        archivo2.close();
+
+        if(totalUnidades > mayorCantidad){
+            mayorCantidad = totalUnidades;
+            idMejorProd = p.idProducto;
+        }
+    }
+    archivo.close();
+}
+
+void ventasSospechosas(const string & nombreArchivo, ofstream &reporte){
+    ifstream archivo(nombreArchivo, ios::binary);
+    Venta p;
+
+    reporte << "\nVENTAS SOSPECHOSAS (cantidad > 100):\n\n";
+
+    while(archivo.read((char*)&p, sizeof(p))){
+        if(p.cantidad > 100){
+            reporte<<"ID Venta: "<<p.idVenta<<" | Vendedor: "<<p.idVendedor<<" | Producto: "<<p.idProducto<<" | Cantidad: "<<p.cantidad<<"\n";
+
+        }
+    }
 
     archivo.close();
-    return;
 }
-void mejorProducto(const string & nombreArchivo){
-    ifstream archivo(nombreArchivo,ios ::binary);
-    Venta p;
-    int cant=0;
-    int idMejorProc;
-    while(archivo.read((char*)&p, sizeof(p))){
-        if(cant<(p.cantidad)){
-            cant=(p.cantidad) ;
-            idMejorProc=p.idProducto;
-        }
-        
-    }
-    cout<<"\nPRODUCTO MAS VENDIDO:\n";
-    cout<<"ID Producto: "<<idMejorProc;
-    cout<<"\nTotal unidades: "<<cant;
-    cout<<"\n";
-
-
-    archivo.close();
-    return;
-}
-void ventaSospechosa(const string & nombreArchivo){
-
-
-
-
-
-
-    cout<<"\nVENTAS SOSPECHOSAS(cantidad>100):\n\n";
-
-
-    return;
-}
-
 
 void crearReporte(const string & nombreArchivo, const string & reporteArchivo){
+    ofstream reporte(reporteArchivo);
 
-    ofstream reporte(reporteArchivo, ios::app);
     if(!reporte){
         cerr<<"Error\n";
         return;
     }
 
-    reporte<<"---REPORTE GENERAL DE VENTA---\n\n";
-    reporte<<"Total de registros: "<<totalRegistros(nombreArchivo);
-    reporte<<"\nMONTO TOTAL VENDIDO:\n";
-    reporte<<"S/."<<montoTotalVendido(nombreArchivo);
-    reporte<<"\n\n------------------------------";
-    mejorVendedor(nombreArchivo);
-    reporte<<"\n------------------------------";
-    mejorProducto(nombreArchivo);
-    reporte<<"\n------------------------------";
+    reporte<<"---REPORTE GENERAL DE VENTAS---\n\n";
+
+    int total = totalRegistros(nombreArchivo);
+    reporte<<"Total de registros: "<<total<<"\n\n";
+
+    double monto = montoTotalVendido(nombreArchivo);
+    reporte<<"MONTO TOTAL VENDIDO:\n";
+    reporte<<"S/. "<<monto<<"\n\n";
+
+    reporte<<"--------------------------------\n";
+
+    int idVend;
+    double mejorMonto;
+    mejorVendedor(nombreArchivo, idVend, mejorMonto);
+
+    reporte<<"VENDEDOR CON MAYOR RECAUDACION:\n";
+    reporte<<"ID Vendedor: "<<idVend<<"\n";
+    reporte<<"Total vendido: S/. "<<mejorMonto<<"\n\n";
+
+    reporte<<"--------------------------------\n";
+
+    int idProd;
+    int mayorCant;
+    mejorProducto(nombreArchivo, idProd, mayorCant);
+    reporte<<"PRODUCTO MAS VENDIDO:\n";
+    reporte<<"ID Producto: "<<idProd<<"\n";
+    reporte<<"Total unidades: "<<mayorCant<<"\n";
 
 
+    reporte<<"--------------------------------\n";
+
+    ventasSospechosas(nombreArchivo, reporte);
 
     
     reporte.close();
 }
+
 int main(){
     string nombreArchivo="ventas.dat";
     string reporteArchivo="reporte.txt";
-    crearReporte(nombreArchivo,reporteArchivo);
-    
 
+    crearReporte(nombreArchivo,reporteArchivo);
+
+    cout<<"Reporte generado correctamente\n";
     return 0;
 }
