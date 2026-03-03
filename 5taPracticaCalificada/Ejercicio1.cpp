@@ -7,8 +7,7 @@ struct Estudiante{
     char nombre[20];
     int nota1;
     int nota2;
-    int nota3;
-    float promedio;
+    int nota3; //quito el float promedio
 };
 
 
@@ -19,7 +18,7 @@ void leerArchivo(const string & nombreArchivo){
         return;
     }
     Estudiante p;
-    cout<<"\n";
+    cout<<"\nLISTA DE ESTUDIANTES\n\n";
     while(archivo>>p.codigo>>p.nombre>>p.nota1>>p.nota2>>p.nota3){
         cout<<"Codigo: "<<p.codigo<<"\tNombre: "<<p.nombre<<"\tNota1: "<<p.nota1<<"\tNota2: "<<p.nota2<<"\tNota 3: "<<p.nota3<<"\n";
     }
@@ -34,66 +33,68 @@ float calcularPromedio(const string & nombreArchivo, int codigo){
         return -1;
     }
     Estudiante p;
-    cout<<"\n";
     while(archivo>>p.codigo>>p.nombre>>p.nota1>>p.nota2>>p.nota3){
         if(p.codigo == codigo){
-            p.promedio=(p.nota1 + p.nota2 + p.nota3  )/3;
-            return p.promedio;
-        }else{ //en caso el codigo este mal escrito
-            cerr<<"Este codigo No existe\n";
-            return -1;
-        }
 
+            archivo.close();
+            return (p.nota1+p.nota2+p.nota3)/3.00; //cambio de 3 a 3.00 
+        }
     }
+
     archivo.close();
     return -1;
 }
 
 void escribirReporte(const string & reporte,const string & nombreArchivo){
-    ofstream archivoReporte(reporte, ios::app);
-    if(!archivoReporte){
-        cerr<<"Error al abrir reporteAlumnos.txt\n";
-        return ;
-
-    }
+    
     ifstream archivo(nombreArchivo);
     if(!archivo){
         cerr<<"Error al abrir notas.txt\n";
         return ;
 
     }
+
+    ofstream archivoReporte(reporte);  //cambio orden, ifstream antes del ofstream 
+    if(!archivoReporte){
+        cerr<<"Error al abrir reporteAlumnos.txt\n";
+        return ;
+
+    }
+
     Estudiante p;
     int cont=0;
     float suma=0;
-    float mayorPromedio=0;
+    float mayorPromedio=-1;  //cambio de 0 a -1
     string nombreMayor;
-    float menorPromedio=20;
+    float menorPromedio=21;  //cambio de 20 a 21
     string nombreMenor;
     archivoReporte<<"Codigo\tNombre\tPromedio\tCondicion\n";
     while(archivo>>p.codigo>>p.nombre>>p.nota1>>p.nota2>>p.nota3){
-        p.promedio=(p.nota1 + p.nota2 + p.nota3  )/3;
-        archivoReporte<<p.codigo<<"\t"<<p.nombre<<"\t"<<p.promedio;
-        if(p.promedio>=10){
-            archivoReporte<<"\tAPROBADO\n";
+
+        float promedio = calcularPromedio(nombreArchivo, p.codigo); //usamos la funcion correcta de promedio
+
+        archivoReporte<<p.codigo<<"\t"<<p.nombre<<"\t"<<promedio<<"\t";
+        
+        if(p.nota1<5 || p.nota2<5 || p.nota3<5){ //cambio de | a ||
+            archivoReporte<<"DESAPROBADO POR REGLA ACADEMICA\n";
         }
-        if(p.promedio<10){
-            if(p.nota1 <5 |p.nota2 <5 |p.nota3 <5 ){
-            archivoReporte<<"\tDESAPROBADO POR REGLA ACADEMICA\n";
-            }else{
-            archivoReporte<<"\tDESAPROBADO\n";
-            }
-            
+        else if(promedio>=10){
+            archivoReporte<<"APROBADO\n";
+        }
+        else{
+            archivoReporte<<"DESAPROBADO\n";
         }
         
-        suma += p.promedio;
+        suma += promedio;
         cont++;
-        if(menorPromedio>p.promedio){
-            menorPromedio=p.promedio;
-            nombreMenor=p.nombre;
-        }
-        if(mayorPromedio<p.promedio){
-            mayorPromedio=p.promedio;
+        if(promedio>mayorPromedio){
+            mayorPromedio=promedio;
             nombreMayor=p.nombre;
+        }
+
+        if(promedio<menorPromedio){
+            menorPromedio=promedio;
+            nombreMenor=p.nombre;
         }
 
 
@@ -101,11 +102,15 @@ void escribirReporte(const string & reporte,const string & nombreArchivo){
     
     
     archivoReporte<<"\n";
-    archivoReporte<<"Total de estudiantes: "<<cont<<"\n";
-    double promGen=suma/cont;
-    archivoReporte<<"Promedio general del Curso: "<<promGen<<"\n";
-    archivoReporte<<"El estudiante con mayor promedio: "<<nombreMayor<<"\t"<<mayorPromedio<<"\n"; //aunque hay varios alumnos que tiene 19 de promedio(nombro solo al primero)
-    archivoReporte<<"El estudiante con menor promedio: "<<nombreMenor<<"\t"<<menorPromedio<<"\n";
+    
+
+
+    if(cont>0){  //usamos if
+        archivoReporte<<"Total de estudiantes: "<<cont<<"\n";
+        archivoReporte<<"Promedio general del curso: "<<suma/cont<<"\n";
+        archivoReporte<<"Mayor promedio: "<<nombreMayor<<" "<<mayorPromedio<<"\n";
+        archivoReporte<<"Menor promedio: "<<nombreMenor<<" "<<menorPromedio<<"\n";
+    }
     
     archivo.close();
     archivoReporte.close();
