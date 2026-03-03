@@ -1,9 +1,9 @@
 Codigo	Nombre	Promedio	Condicion
-1001	Juan	15	APROBADO
-1002	Maria	10	APROBADO
+1001	Juan	15.6667	APROBADO
+1002	Maria	10.6667	APROBADO
 1003	Luis	19	APROBADO
-1004	Ana	8	DESAPROBADO
-1005	Carlos	15	APROBADO
+1004	Ana	8.33333	DESAPROBADO
+1005	Carlos	15.3333	APROBADO
 1006	Lucia	12	APROBADO
 1007	Pedro	6	DESAPROBADO
 1008	Sofia	19	APROBADO
@@ -16,7 +16,7 @@ Codigo	Nombre	Promedio	Condicion
 1015	Miguel	6	DESAPROBADO
 1016	Patricia	15	APROBADO
 1017	Fernando	11	APROBADO
-1018	Daniela	19	APROBADO
+1018	Daniela	19.6667	APROBADO
 1019	Jorge	5	DESAPROBADO POR REGLA ACADEMICA
 1020	Paola	14	APROBADO
 1021	Marco	12	APROBADO
@@ -31,6 +31,6 @@ Codigo	Nombre	Promedio	Condicion
 1030	Monica	17	APROBADO
 
 Total de estudiantes: 30
-Promedio general del Curso: 12.7
-El estudiante con mayor promedio: Luis	19
-El estudiante con menor promedio: Jorge	5
+Promedio general del curso: 12.7889
+Mayor promedio: Daniela 19.6667
+Menor promedio: Jorge 5
