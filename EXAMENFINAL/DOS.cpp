@@ -23,7 +23,7 @@ Punto* masLejano(Punto* p1, Punto* p2){
     double d1 =distanciaOrigen(p1);
     double d2 =distanciaOrigen(p2);
     
-    if(d1<d2){
+    if(d1>d2){   
         return p1;
     }else{
         return p2;
