@@ -25,6 +25,8 @@ void llenarMatriz(int** M, int n, int m){
 int* sumaFilas(int** M, int n,int m){
     int* sfil= new int[n];
     for(int i=0;i<n;i++){
+
+        sfil[i]=0;    //inicializar denuevo
         for(int j=0;j<m;j++){
             sfil[i]+=M[i][j];
 
@@ -60,7 +62,8 @@ int main(){
 
     liberarMatriz(M,n);
 
-
+    delete[] sfilas;  //liberar
 
     return 0;
 }
+//me faltaba inicializar y liberar sfilas
