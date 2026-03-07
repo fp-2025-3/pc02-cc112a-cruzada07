@@ -9,47 +9,42 @@ struct Punto{
 
 };
 void leerPunto(Punto *p){
-    Punto p1= *p;
-    cout<<"\nLas coordenadas del punto son: \n";
-    cout<<"Punto X: "<<p1.x;
-    cout<<"\nPunto Y: "<<p1.y;
-    cout<<"\n";
+    cout<<"Ingrese X: "; cin>>p->x;
+
+    cout<<"Ingrese Y: "; cin>>p->y;
+
 }
 double distanciaOrigen( const Punto* p){
-    Punto p1=*p;
-    double d1;
-    d1=sqrt ( (p1.x)^2 + (p1.y)^2 );
-    return d1;
+    return sqrt(p->x * p->x + p->y * p->y); //x*x en vez de x^2
 }
 
 Punto* masLejano(Punto* p1, Punto* p2){
-    Punto pU= *p1;
-    Punto pD= *p2;
-    Punto* masLejos;
+    
     double d1 =distanciaOrigen(p1);
     double d2 =distanciaOrigen(p2);
     
     if(d1<d2){
-        *masLejos=pD;
+        return p1;
     }
     if(d1>=d2){
-        *masLejos=pU;
+        return p2;
     }
-    return masLejos;
 }
 int main(){
 
-    Punto p1;
-    p1.x=2;
-    p1.y=4;
+    Punto p1,p2;
+    
+    cout<<"Punto 1\n";
+    leerPunto(&p1);
 
-    Punto p2;
-    p2.x=3;
-    p2.y=7;
+    cout<<"Punto 2\n";
+    leerPunto(&p2);
 
     Punto* F =masLejano(&p1,&p2);
-
-    leerPunto(F);
+    
+    cout<<"\nEl mas lejano es: \n";
+    cout<<"X: "<<F->x<<endl;
+    cout<<"Y: "<<F->y<<endl;
 
     return 0;
 }
