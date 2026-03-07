@@ -25,8 +25,7 @@ Punto* masLejano(Punto* p1, Punto* p2){
     
     if(d1<d2){
         return p1;
-    }
-    if(d1>=d2){
+    }else{
         return p2;
     }
 }
